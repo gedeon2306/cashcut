@@ -350,7 +350,7 @@ const SettingPage = () => {
                       className="btn btn-error btn-outline transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
                     >
                       {isDeletting ? <span className="loading loading-spinner loading-sm"></span> : <Trash2 className="w-4 h-4" />}
-                      {isDeletting ? 'Suppression...' : 'Supprimer définitivement mon compte'}
+                      {isDeletting ? 'Suppression...' : 'Supprimer définitivement'}
                     </button>
                   </div>
                 </form>

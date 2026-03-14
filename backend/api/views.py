@@ -307,7 +307,7 @@ def transaction_list(request):
     """
     if request.method == 'GET':
         transactions = Transaction.objects.filter(user=request.user)
-        barbers = Barber.objects.all()
+        barbers = Barber.objects.filter(user=request.user)
         paginator = PageNumberPagination()
         paginator.page_size = 15  
         result_page = paginator.paginate_queryset(transactions, request)
@@ -695,7 +695,7 @@ def dashboard(request):
         barber_rank["rank"] = index + 1     # Rang #1, #2, #3...
 
     # ── 8. Barbers ──────────────────────────────────────
-    barbers = Barber.objects.all()
+    barbers = Barber.objects.filter(user=request.user)
     barber_serializer = BarberSerializer(barbers, many=True)
 
     # ── 9. Retour de la réponse complète ──────────────────────────────────────
