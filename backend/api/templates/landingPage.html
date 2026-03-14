@@ -1,0 +1,341 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CashCut API</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --black:   #0a0a0a;
+      --white:   #f5f0e8;
+      --gold:    #c9a84c;
+      --gold2:   #e8c97a;
+      --dim:     #2a2a2a;
+      --muted:   #888;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--black);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.4;
+    }
+
+    /* ── BACKGROUND GLOW ── */
+    .bg-glow {
+      position: fixed;
+      width: 700px;
+      height: 700px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(201,168,76,0.12) 0%, transparent 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      animation: breathe 6s ease-in-out infinite;
+    }
+
+    @keyframes breathe {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+      50%       { transform: translate(-50%, -50%) scale(1.15); opacity: 0.7; }
+    }
+
+    /* ── HORIZONTAL RULE LINES ── */
+    .line-top, .line-bottom {
+      position: fixed;
+      left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      opacity: 0.25;
+    }
+    .line-top    { top: 40px; }
+    .line-bottom { bottom: 40px; }
+
+    /* ── MAIN LAYOUT ── */
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 24px;
+      position: relative;
+      text-align: center;
+    }
+
+    /* ── TAG ── */
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(201,168,76,0.35);
+      border-radius: 100px;
+      padding: 6px 16px;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 36px;
+      opacity: 0;
+      animation: fadeUp 0.6s 0.2s forwards;
+    }
+
+    .tag-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--gold);
+      animation: blink 2s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.2; }
+    }
+
+    /* ── TITLE ── */
+    .title-wrap {
+      position: relative;
+      margin-bottom: 32px;
+      opacity: 0;
+      animation: fadeUp 0.7s 0.4s forwards;
+    }
+
+    .title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(80px, 16vw, 200px);
+      line-height: 0.9;
+      letter-spacing: 0.02em;
+      background: linear-gradient(160deg, var(--white) 30%, var(--gold2) 70%, var(--gold) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative;
+      z-index: 1;
+    }
+
+    .title-shadow {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(80px, 16vw, 200px);
+      line-height: 0.9;
+      letter-spacing: 0.02em;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(201,168,76,0.15);
+      position: absolute;
+      top: 6px; left: 6px;
+      z-index: 0;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--gold), var(--gold2));
+      margin: 0 auto 32px;
+      opacity: 0;
+      animation: fadeUp 0.6s 0.6s forwards;
+    }
+
+    /* ── DESCRIPTION ── */
+    .description {
+      max-width: 520px;
+      font-size: clamp(15px, 2vw, 17px);
+      font-weight: 300;
+      line-height: 1.75;
+      color: rgba(245,240,232,0.65);
+      margin-bottom: 52px;
+      opacity: 0;
+      animation: fadeUp 0.7s 0.75s forwards;
+    }
+
+    .description strong {
+      color: var(--white);
+      font-weight: 500;
+    }
+
+    /* ── ENDPOINTS PILLS ── */
+    .endpoints {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 52px;
+      opacity: 0;
+      animation: fadeUp 0.6s 0.9s forwards;
+    }
+
+    .pill {
+      background: var(--dim);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 6px;
+      padding: 5px 12px;
+      font-size: 12px;
+      font-family: 'Courier New', monospace;
+      color: var(--muted);
+      transition: color 0.2s, border-color 0.2s;
+    }
+
+    .pill:hover {
+      color: var(--gold2);
+      border-color: rgba(201,168,76,0.3);
+    }
+
+    /* ── CTA BUTTON ── */
+    .cta-wrap {
+      opacity: 0;
+      animation: fadeUp 0.7s 1.05s forwards;
+    }
+
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold2) 100%);
+      color: var(--black);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 15px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 16px 40px;
+      border-radius: 4px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 0 40px rgba(201,168,76,0.25);
+    }
+
+    .cta::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--gold2), var(--white));
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 50px rgba(201,168,76,0.4);
+    }
+
+    .cta:hover::before { opacity: 0.15; }
+
+    .cta span { position: relative; z-index: 1; }
+
+    .cta-arrow {
+      position: relative;
+      z-index: 1;
+      font-size: 18px;
+      transition: transform 0.2s;
+    }
+    .cta:hover .cta-arrow { transform: translateX(4px); }
+
+    /* ── FOOTER INFO ── */
+    .footer-info {
+      position: fixed;
+      bottom: 52px;
+      left: 0; right: 0;
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(245,240,232,0.2);
+      opacity: 0;
+      animation: fadeUp 0.6s 1.3s forwards;
+    }
+
+    /* ── CORNER MARKS ── */
+    .corner {
+      position: fixed;
+      width: 20px; height: 20px;
+      opacity: 0.2;
+    }
+    .corner-tl { top: 28px; left: 28px; border-top: 1px solid var(--gold); border-left: 1px solid var(--gold); }
+    .corner-tr { top: 28px; right: 28px; border-top: 1px solid var(--gold); border-right: 1px solid var(--gold); }
+    .corner-bl { bottom: 28px; left: 28px; border-bottom: 1px solid var(--gold); border-left: 1px solid var(--gold); }
+    .corner-br { bottom: 28px; right: 28px; border-bottom: 1px solid var(--gold); border-right: 1px solid var(--gold); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-glow"></div>
+  <div class="line-top"></div>
+  <div class="line-bottom"></div>
+
+  <div class="corner corner-tl"></div>
+  <div class="corner corner-tr"></div>
+  <div class="corner corner-bl"></div>
+  <div class="corner corner-br"></div>
+
+  <main class="page">
+
+    <div class="tag">
+      <span class="tag-dot"></span>
+      REST API · v1.0
+    </div>
+
+    <div class="title-wrap">
+      <div class="title-shadow" aria-hidden="true">CASHCUT</div>
+      <h1 class="title">CASHCUT</h1>
+    </div>
+
+    <div class="divider"></div>
+
+    <p class="description">
+      API de gestion de <strong>salon de coiffure</strong>.<br/>
+      Gérez vos barbiers, suivez vos transactions, générez des <strong>rapports mensuels</strong>
+      et consultez votre tableau de bord en temps réel.
+    </p>
+
+    <div class="endpoints">
+      <span class="pill">POST /api/auth/register</span>
+      <span class="pill">GET /api/barbers/</span>
+      <span class="pill">GET /api/transactions/</span>
+      <span class="pill">POST /api/reports/monthly/</span>
+      <span class="pill">GET /api/dashboard/</span>
+    </div>
+
+    <div class="cta-wrap">
+      <a href="/api/docs/" class="cta">
+        <span>Explorer la documentation</span>
+        <span class="cta-arrow">→</span>
+      </a>
+    </div>
+
+  </main>
+
+  <footer class="footer-info">
+    <span>Django REST Framework</span>
+    <span>·</span>
+    <span>drf-spectacular</span>
+    <span>·</span>
+    <span>OpenAPI 3.0</span>
+  </footer>
+
+</body>
+</html>

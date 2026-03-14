@@ -1,0 +1,8 @@
+# Exemple de configuration my.cnf
+[client]
+database = 'your_database_name'
+user = 'your_username'
+password = 'your_password'
+default-character-set = 'utf8'
+host = 'your_host'
+port = 'your_port'
