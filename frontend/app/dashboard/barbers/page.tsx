@@ -365,8 +365,8 @@ const BarberPage = () => {
                 <label className="label text-xs font-semibold">Salaire (%)</label>
                 <input
                   type="number"
-                  step={10}
-                  min={10}
+                  step={1}
+                  min={1}
                   max={100}
                   defaultValue={40}
                   name="salary"
@@ -426,8 +426,8 @@ const BarberPage = () => {
                 <label className="label text-xs font-semibold">Salaire (%)</label>
                 <input
                   type="number"
-                  step={10}
-                  min={10}
+                  step={1}
+                  min={1}
                   max={100}
                   defaultValue={editingBarber?.salary}
                   name="salary"

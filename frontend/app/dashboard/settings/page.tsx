@@ -19,6 +19,8 @@ const SettingPage = () => {
   const [isDeletting, setIsDeletting] = useState(false);
   const [isUpdatting, setIsUpdatting] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
+  const deleteModalRef = useRef<HTMLDialogElement>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState('')
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -44,23 +46,23 @@ const SettingPage = () => {
     }
   };
 
-  const handleDeleteAccount = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const delete_confirm = formData.get('delete_confirm');
-
-    if (delete_confirm !== 'SUPPRIMER') {
+  const handleOpenDelete = () => {
+    if (deleteConfirm !== 'SUPPRIMER') {
       toast.error('Veuillez taper SUPPRIMER pour confirmer la suppression.');
       return;
     }
 
-    if (!confirm('Voulez-vous vraiment supprimer votre compte ? Cette action est irréversible.')) {
-      return;
-    }
+    deleteModalRef.current?.showModal();
+  };
+
+  const handleDeleteAccount = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
     setIsDeletting(true);
     const success = await deleteUserProfile();
     setIsDeletting(false);
+    setDeleteConfirm('');
+    deleteModalRef.current?.close();
 
     if (success) {
       toast.success('Compte supprimé avec succès.');
@@ -326,7 +328,7 @@ const SettingPage = () => {
                   </span>
                 </div>
 
-                <form ref={formRef} onSubmit={handleDeleteAccount} className="space-y-4">
+                <div className="space-y-4">
                   <div className="form-control">
                     <label className="label">
                       <span className="label-text font-medium">
@@ -335,34 +337,74 @@ const SettingPage = () => {
                     </label>
                     <input
                       type="text"
-                      name="delete_confirm"
+                      name="deleteConfirm"
                       placeholder="SUPPRIMER"
                       autoComplete="off"
-                      required
+                      value={deleteConfirm}
+                      onChange={(e) => { setDeleteConfirm(e.target.value) }}
                       className="input input-bordered focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent w-full"
                     />
                   </div>
 
                   <div className="flex justify-end pt-2">
                     <button
-                      type="submit"
-                      disabled={isDeletting}
+                      type="button"
+                      onClick={() => handleOpenDelete()}
                       className="btn btn-error btn-outline transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
                     >
-                      {isDeletting ? <span className="loading loading-spinner loading-sm"></span> : <Trash2 className="w-4 h-4" />}
-                      {isDeletting ? 'Suppression...' : 'Supprimer définitivement'}
+                      <Trash2 className="w-4 h-4" /> Supprimer définitivement
                     </button>
                   </div>
-                </form>
+                </div>
               </div>
             </section>
-            
+
           </div>
+
+          {/* MODAL SUPPRESSION */}
+          <dialog
+            ref={deleteModalRef}
+            className="modal modal-bottom sm:modal-middle backdrop-blur"
+          >
+            <div className="modal-box">
+              <h3 className="font-bold text-lg">Dernière chance !</h3>
+              <p className="py-4 text-sm md:text-base">
+                Voulez-vous vraiment supprimer votre compte ? Cette action est irréversible.
+              </p>
+              <form ref={formRef} onSubmit={handleDeleteAccount} className="space-y-4">
+                <div className="flex justify-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setDeleteConfirm('');
+                      deleteModalRef.current?.close();
+                    }}
+                    className="btn btn-ghost"
+                  >
+                    Non, annuler
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isDeletting}
+                    className="btn btn-error gap-2"
+                  >
+                    {isDeletting ? (
+                      <span className="loading loading-spinner loading-sm" />
+                    ) : (
+                      <Trash2 className="w-4 h-4" />
+                    )}
+                    {isDeletting ? 'Suppression en cours...' : 'Oui, supprimer'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </dialog>
+
         </main>
       )}
 
       <Footer />
-    
+
     </div>
   );
 };
