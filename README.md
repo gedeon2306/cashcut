@@ -152,6 +152,7 @@ Quelques URLs utiles côté backend :
 
 - **API** : `http://127.0.0.1:8000/api/`
 - **Docs Swagger** : `http://127.0.0.1:8000/api/docs/`
+- **Redoc Swagger** : `http://127.0.0.1:8000/api/docs/`
 - **Schema OpenAPI** : `http://127.0.0.1:8000/api/schema/`
 
 ### 2. Frontend (Next.js)
