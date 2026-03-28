@@ -102,11 +102,30 @@ Schéma simplifié :
 
 ---
 
+## Stack technique
+
+| Technologie | Version | Rôle |
+|---|---|---|
+| **Next.js** | 16.1.6 | Framework frontend SSR/SSG |
+| **React** | 19.2.3 | Bibliothèque d'UI |
+| **TypeScript** | 5.x | Typage statique frontend |
+| **Tailwind CSS** | 4.x | Styling et design system |
+| **DaisyUI** | 5.5.19 | Composants UI prédéfinis |
+| **Axios** | 1.13.6 | Client HTTP |
+| **Django** | 6.0.2 | Framework backend |
+| **Django REST Framework** | 3.16.1 | Sérialisation et API REST |
+| **Django SimpleJWT** | 5.5.1 | Authentification JWT |
+| **drf-spectacular** | 0.29.0 | Documentation OpenAPI/Swagger |
+| **MySQL** | (optionnel) | Base de données production |
+
+---
+
 ## Prérequis
 
 - **Node.js** ≥ 18 (recommandé) + npm, yarn ou pnpm.
 - **Python** ≥ 3.10.
 - **pip** + (optionnel) `virtualenv` / `venv`.
+- **Git** pour cloner le dépôt.
 
 ---
 
@@ -152,6 +171,7 @@ Quelques URLs utiles côté backend :
 
 - **API** : `http://127.0.0.1:8000/api/`
 - **Docs Swagger** : `http://127.0.0.1:8000/api/docs/`
+- **Redoc Swagger** : `http://127.0.0.1:8000/api/docs/`
 - **Schema OpenAPI** : `http://127.0.0.1:8000/api/schema/`
 
 ### 2. Frontend (Next.js)
