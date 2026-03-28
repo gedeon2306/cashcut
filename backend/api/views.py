@@ -453,6 +453,12 @@ def monthly_report(request):
             status=status.HTTP_400_BAD_REQUEST,
         )
 
+    if not (1 <= int(month) <= 12):
+        return Response(
+            {"error": "'month' doit être un entier entre 1 et 12."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
     try:
         # On s'assure que month et year sont bien des entiers
         month = int(month)
