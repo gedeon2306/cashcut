@@ -184,7 +184,16 @@ const NavBar = () => {
               </svg>
             </div>
             <ul tabIndex={-1} className="dropdown-content bg-base-300 rounded-box z-1 right-0.5 w-52 p-2 shadow-2xl">
-              
+              {themes.map((t) => (
+                <li key={t}>
+                  <button
+                    onClick={() => changeTheme(t)}
+                    className={`btn btn-sm btn-block btn-ghost justify-start ${theme === t ? 'btn-active' : ''}`}
+                  >
+                    {t.charAt(0).toUpperCase() + t.slice(1)}
+                  </button>
+                </li>
+              ))}
             </ul>
           </div>
           {userName ? (
