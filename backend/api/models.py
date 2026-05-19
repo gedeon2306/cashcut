@@ -10,6 +10,7 @@ class UserManager(BaseUserManager):
             raise ValueError("L'email est obligatoire")
         user = self.model(email=self.normalize_email(email), name=name)
         user.set_password(password)
+        user.is_active = False
         user.save(using=self._db)
         return user
 
@@ -20,7 +21,7 @@ class User(AbstractBaseUser):
     ville = models.CharField(max_length=255, default="")
     created_at = models.DateTimeField(auto_now_add=True)
     
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)
     
     objects = UserManager()
 
