@@ -16,7 +16,7 @@ from rest_framework import serializers as drf_serializers
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-from .models import Barber, Transaction
+from .models import User, Barber, Transaction
 from .serializers import UserSerializer, BarberSerializer, TransactionSerializer
 
 
