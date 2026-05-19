@@ -15,39 +15,39 @@ const RegisterPage = () => {
 
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [password, setPassword] = useState('');
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (password.length < 8) {
+      toast.error('Le mot de passe doit contenir au moins 8 caractères');
+      return;
+    }
+
     setIsSubmitting(true);
 
     const formData = new FormData(e.currentTarget);
     const data = Object.fromEntries(formData);
 
     try {
-      // On appelle notre API Next.js locale
       await axios.post('/api/register', data);
 
-      // On redirige vers l'accueil
-      router.push(ROUTES.DASHBOARD.ROOT);
-      router.refresh()
+      const email = formData.get('email') as string;
+      const action = 'inscription';
+      router.push(`${ROUTES.AUTH.EMAIL_SEND}?email=${encodeURIComponent(email)}&action=${action}`);
+      router.refresh();
     } catch (err: any) {
-      const status = err.response?.status;
-      const data = err.response?.data;
-
-      if (status === 400) {
-        const firstError =
-          data?.email?.[0] ||
-          data?.password?.[0] ||
-          data?.name?.[0] ||
-          data?.error ||
-          "Données invalides";
-        toast.error(firstError);
-      } else if (status === 429) {
-        toast.error("Trop de tentatives, réessayez plus tard");
-      } else if (status === 500) {
-        toast.error("Erreur serveur, réessayez plus tard");
+      if (err?.response?.status === 400) {
+        if(err?.response?.data?.email && err?.response?.data?.email == "user with this email already exists."){
+          toast.error("Cet email est déjà utilisé");
+        } else if(err?.response?.data?.email) {
+          toast.error(err?.response?.data?.email);
+        }else{
+          toast.error(err?.response?.data?.error);
+        }
       } else {
-        toast.error("Une erreur est survenue");
+        toast.error("Problème de connexion au serveur");
       }
     } finally {
       setIsSubmitting(false);
@@ -106,6 +106,7 @@ const RegisterPage = () => {
                   <input
                     name="password"
                     type="password"
+                    onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
                     className="input input-bordered focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent w-full"
                   />

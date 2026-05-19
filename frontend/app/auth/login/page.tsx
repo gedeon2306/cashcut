@@ -24,26 +24,14 @@ const LoginPage = () => {
     const data = Object.fromEntries(formData);
 
     try {
-      // ON APPELLE NEXT.JS (la route créée à l'étape 1)
       await axios.post('/api/login/', data);
-      
-      // Si ça marche, on va à l'accueil
       router.push(ROUTES.DASHBOARD.ROOT);
-      router.refresh(); // Pour forcer le middleware à vérifier le nouveau cookie
-    } catch (error: any) {
-      const message = error.response?.data?.error || "Erreur de connexion";
-      const status = error.response?.status;
-
-      if (status === 401) {
-          toast.error("Email ou mot de passe incorrect");
-      } else if (status === 404) {
-          toast.error("Compte introuvable");
-      } else if (status === 429) {
-          toast.error("Trop de tentatives, réessayez plus tard");
-      } else if (status === 500) {
-          toast.error("Erreur serveur, réessayez plus tard");
-      } else {
-          toast.error(message);
+      router.refresh();
+    } catch (err: any) {
+      if(err?.response?.status === 401){
+        toast.error(err?.response?.data.error);
+      }else{
+        toast.error("Problème de connexion au serveur");
       }
     } finally {
       setIsSubmitting(false);
@@ -90,12 +78,12 @@ const LoginPage = () => {
                     className="input input-bordered focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent w-full"
                   />
                   <label className="label">
-                    <a
-                      href="#"
+                    <Link
+                      href={ROUTES.AUTH.FORGOT_PASSWORD}
                       className="label-text-alt link link-hover text-primary"
                     >
                       Mot de passe oublié ?
-                    </a>
+                    </Link>
                   </label>
                 </div>
 
