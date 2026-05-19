@@ -1,3 +1,5 @@
 .env
 my.cnf
 db.sqlite3
+
+**/__pycache__/
