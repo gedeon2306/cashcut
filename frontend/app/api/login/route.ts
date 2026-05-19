@@ -8,7 +8,7 @@ export async function POST(request: Request) {
 
         const response = await api.post('login/', body);
 
-        // On récupère les DEUX tokens que Django renvoie
+        // 👇 On récupère les DEUX tokens que Django renvoie
         const { access, refresh } = response.data;
 
         const nextResponse = NextResponse.json({
@@ -24,7 +24,7 @@ export async function POST(request: Request) {
             maxAge: 60 * 60 * 24
         });
 
-        // Cookie pour le refresh token (longue durée)
+        // 👇 Cookie pour le refresh token (longue durée)
         nextResponse.cookies.set('refresh_token', refresh, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
@@ -36,12 +36,9 @@ export async function POST(request: Request) {
         return nextResponse;
 
     } catch (error: any) {
-        const status = error.response?.status || 500;
-        const message = error.response?.data?.detail || "Erreur serveur";
-        
         return NextResponse.json(
-            { error: message },
-            { status }
+            { error: "Identifiants incorrects" },
+            { status: 401 }
         );
     }
 }
