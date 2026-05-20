@@ -8,7 +8,8 @@ class UserManager(BaseUserManager):
     def create_user(self, email, name, password=None):
         if not email:
             raise ValueError("L'email est obligatoire")
-        user = self.model(email=self.normalize_email(email), name=name)
+        email = self.normalize_email(email).lower()
+        user = self.model(email=email, name=name)
         user.set_password(password)
         user.is_active = False
         user.save(using=self._db)
