@@ -10,8 +10,8 @@ CashCut est une application de **gestion de salon de coiffure / barbershop** qui
 
 Le projet est structuré en deux parties :
 
-- **frontend** : interface web moderne en Next.js 16 + React 19 + Tailwind CSS 4 + DaisyUI.
-- **backend** : API REST en Django + Django REST Framework + JWT (SimpleJWT) + drf-spectacular (docs swagger).
+- **frontend** : interface web moderne en **Next.js 16.1.6** + **React 19.2.3** + **Tailwind CSS 4** + **DaisyUI 5.5.19**.
+- **backend** : API REST en **Django 6.0.2** + **Django REST Framework 3.16.1** + **JWT (SimpleJWT 5.5.1)** + **drf-spectacular 0.29.0** (docs OpenAPI/Swagger).
 
 ---
 
@@ -68,10 +68,12 @@ Le projet est structuré en deux parties :
 
 - **API & Sécurité**
   - Authentification **JWT** (`/api/login/`, `/api/token/refresh/`).
-  - Limitation de débit (throttling) DRF.
+  - Tokens JWT avec durée de vie d'**1 jour** (access et refresh).
+  - Limitation de débit (throttling) : 100 requêtes/jour anonyme, 1000/jour utilisateur.
   - Modèle utilisateur personnalisé (`api.User`) avec email comme identifiant.
-  - Validation métier (montant > 0, contrôle de l’appartenance d’un coiffeur à l’utilisateur connecté, etc.).
-  - Documentation OpenAPI/Swagger automatique via **drf-spectacular**.
+  - Validation métier (montant > 0, contrôle de l'appartenance d'un coiffeur à l'utilisateur connecté, etc.).
+  - Documentation OpenAPI/Swagger automatique via **drf-spectacular** (disponible à `/api/schema/swagger/`).
+  - Gestion des **emails** (confirmation, réinitialisation mot de passe) via backend personnalisé.
 
 ---
 
@@ -92,12 +94,74 @@ Schéma simplifié :
   - `src/app/actions/actions.ts` : Server Actions (appel API, gestion JWT).
   - `src/constants/api.ts` : client Axios configuré avec `API_URL` / `NEXT_PUBLIC_API_URL`.
 
-- **Backend (Django)**
-  - `api/models.py` : modèles `User`, `Barber`, `Transaction`.
-  - `api/serializers.py` : sérialisateurs DRF.
-  - `api/views.py` : endpoints (auth, profil, barbers, transactions, rapports, dashboard).
-  - `api/urls.py` : routes API (`/api/...`).
-  - `cashcut/settings.py` : configuration Django, DRF, JWT, CORS, etc.
+L'application est maintenant accessible à **`http://localhost:3000`**.
+
+---
+
+## Utilisation
+
+### Pour un gestionnaire de salon :
+
+1. **S'inscrire** : créer un compte via `http://localhost:3000/auth/register`.
+2. **Confirmer email** : cliquer sur le lien reçu par email (en développement, voir les logs Django).
+3. **Tableau de bord** : accéder à `/dashboard` pour voir les KPI du jour.
+4. **Ajouter des coiffeurs** : via le formulaire modal dans le dashboard ou la page dédiée.
+5. **Enregistrer des transactions** : ajouter un service (coiffeur, montant, moyen de paiement, date).
+6. **Consulter les rapports** : voir les salaires et le bénéfice net mensuellement.
+7. **Gérer le profil** : modifier les paramètres utilisateur, changer le mot de passe, supprimer le compte.
+
+### Pour un développeur :
+
+- Consulter la **documentation Swagger** à `/api/docs/` pour tester les endpoints directement.
+- Se connecter via `/api/login/` pour obtenir les tokens JWT (à inclure dans les en-têtes `Authorization: Bearer <access_token>`).
+- Les tests unitaires et d'intégration se trouvent dans `backend/api/tests.py` et `backend/api/integration_tests.py`.
+
+---
+
+## Déploiement
+
+### Backend (Django)
+
+Pour la production, adapter `backend/cashcut/settings.py` :
+
+- Définir `DEBUG=False`.
+- Configurer une vraie base de données (MySQL, PostgreSQL).
+- Utiliser une clé secrète sécurisée.
+- Configurer `ALLOWED_HOSTS`, `CORS_ALLOWED_ORIGINS`, etc.
+- Déployer via **Gunicorn** / **uWSGI**.
+
+### Frontend (Next.js)
+
+Pour la production :
+
+```bash
+npm run build
+npm start
+```
+
+Ou déployer sur **Vercel**, **Netlify**, **Railway**, etc.
+
+---
+
+## Contribution
+
+Les contributions sont bienvenues ! Veuillez créer une branche, effectuer les modifications, puis soumettre une pull request.
+
+---
+
+## License
+
+Ce projet est sous license MIT. Voir le fichier `LICENSE` pour plus de détails.
+
+---
+
+## Support
+
+Pour des questions ou des problèmes, veuillez ouvrir une **issue** sur GitHub ou contacter le mainteneur.
+
+---
+
+**Dernière mise à jour** : mai 2026
   - `cashcut/urls.py` : routes principales + docs swagger (`/api/docs/`).
 
 ---

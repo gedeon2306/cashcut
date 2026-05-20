@@ -2,12 +2,13 @@
 
 Ce dossier contient l'API **REST** de CashCut, basée sur :
 
-- **Django**
-- **Django REST Framework**
-- **SimpleJWT** (authentification JWT)
-- **drf-spectacular** (documentation OpenAPI / Swagger)
-- **django-environ** (gestion des variables d'environnement)
-- **corsheaders** (CORS)
+- **Django 6.0.2**
+- **Django REST Framework 3.16.1**
+- **Django SimpleJWT 5.5.1** (authentification JWT)
+- **drf-spectacular 0.29.0** (documentation OpenAPI / Swagger)
+- **django-environ 0.13.0** (gestion des variables d'environnement)
+- **django-cors-headers 4.9.0** (CORS)
+- **mysqlclient 2.2.8** (optionnel, pour MySQL en production)
 
 L'API est responsable de la gestion :
 
@@ -390,3 +391,7 @@ python manage.py test
 - Mettre à jour les variables d'environnement (DEBUG, SECRET_KEY, ALLOWED_HOSTS, CORS_ALLOWED_ORIGINS).
 - Configurer un service d'envoi d'emails (SendGrid, AWS SES, etc.) en remplaçant le backend personnalisé.
 - Activer HTTPS/SSL.
+
+---
+
+**Dernière mise à jour** : mai 2026
