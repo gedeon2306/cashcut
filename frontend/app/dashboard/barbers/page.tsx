@@ -2,10 +2,9 @@
 
 import Footer from "@/src/components/Footer";
 import NavBar from "@/src/components/NavBar";
+import Pagination from "@/src/components/Pagination";
 import { useEffect, useState, useRef } from 'react';
 import {
-  ChevronLeft,
-  ChevronRight,
   EllipsisVertical,
   Plus,
   Scissors,
@@ -301,37 +300,11 @@ const BarberPage = () => {
           </section>
 
           {/* Pagination */}
-          {totalPages > 1 && (
-            <section className="flex justify-end">
-              <div className="join">
-                <button
-                  className="join-item btn btn-sm"
-                  onClick={() => setCurrentPage((p) => p - 1)}
-                  disabled={currentPage === 1}
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </button>
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                  <button
-                    key={page}
-                    className={`join-item btn btn-sm ${
-                      currentPage === page ? 'btn-active btn-primary' : ''
-                    }`}
-                    onClick={() => setCurrentPage(page)}
-                  >
-                    {page}
-                  </button>
-                ))}
-                <button
-                  className="join-item btn btn-sm"
-                  onClick={() => setCurrentPage((p) => p + 1)}
-                  disabled={currentPage === totalPages}
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
-            </section>
-          )}
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
         </div>
 
         {/* MODAL AJOUT */}
